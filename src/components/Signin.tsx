@@ -47,6 +47,13 @@ const Signin = () => {
       emailReq: false,
     }));
 
+    // Check if the input is a phone number
+    const phoneNumberRegex = /^[0-9]{10}$/;
+    if (phoneNumberRegex.test(value)) {
+      setSuggestedDomains([]); // Clear suggestions for phone numbers
+      return;
+    }
+
     if (!value.includes('@')) {
       setSuggestedDomains(emailDomains);
       return;
@@ -155,6 +162,7 @@ const Signin = () => {
                 value={email.current}
                 onChange={handleEmailChange}
                 onKeyDown={handleKeyDown}
+                onBlur={() => setSuggestedDomains([])} // Clear suggestions on blur
               />
               {email.current && suggestedDomains.length > 0 && (
                 <ul
