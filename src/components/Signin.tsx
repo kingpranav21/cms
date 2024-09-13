@@ -46,13 +46,25 @@ const Signin = () => {
       ...prevState,
       emailReq: false,
     }));
-
+    // Check if the input is a phone number
+    const phoneNumberRegex = /^[0-9]{10}$/;
+    if (phoneNumberRegex.test(value)) {
+      setSuggestedDomains([]); // Clear suggestions for phone numbers
+      return;
+    }
     if (!value.includes('@')) {
       setSuggestedDomains(emailDomains);
       return;
     }
 
     const [, currentDomain] = value.split('@');
+
+    // Clear suggestions if domain doesn't match
+    if (!currentDomain || !emailDomains.some((domain) => domain.startsWith(currentDomain))) {
+      setSuggestedDomains([]); // Hide suggestions for mismatched domains
+      return;
+    }
+
     // Check for exact matches and filter for partial matches
     const exactMatch = emailDomains.find((domain) => domain === currentDomain);
     if (exactMatch) {
@@ -155,6 +167,7 @@ const Signin = () => {
                 value={email.current}
                 onChange={handleEmailChange}
                 onKeyDown={handleKeyDown}
+                onBlur={() => setSuggestedDomains([])} // Hide suggestions on blur
               />
               {email.current && suggestedDomains.length > 0 && (
                 <ul
